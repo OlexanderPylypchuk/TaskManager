@@ -3,18 +3,19 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using TaskManager.Data;
 using TaskManager.Models;
 using TaskManager.Models.Dtos;
+using TaskManager.Repository.IRepository;
 using TaskManager.Service.IService;
 
 namespace TaskManager.Service
 {
     public class AuthService : IAuthService
     {
-        private readonly AppDbContext _db;
+        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasherService _passwordHasher;
         private IJwtTokenGenerator _jwtTokenGenerator;
-        public AuthService(IJwtTokenGenerator jwtTokenGenerator, AppDbContext db, IPasswordHasherService passwordHasherService)
+        public AuthService(IJwtTokenGenerator jwtTokenGenerator, IUserRepository userRepository, IPasswordHasherService passwordHasherService)
         {
-            _db = db;
+            _userRepository = userRepository;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasher = passwordHasherService;
         }
@@ -22,9 +23,9 @@ namespace TaskManager.Service
         {
             try
             {
-                var user = _db.Users.First(u=>u.Username == username);
-                
-                if(_passwordHasher.VerifyPassword(user.PasswordHash, password))
+                var user = await _userRepository.GetAsync(u=>u.Username == username);
+
+                if (_passwordHasher.VerifyPassword(user.PasswordHash, password))
                 {
                     var token = _jwtTokenGenerator.GenerateToken(user);
                     return new LoginResponceDto
@@ -54,8 +55,7 @@ namespace TaskManager.Service
                 };
                 string hash = _passwordHasher.HashPassword(registrationRequestDto.Password);
                 user.PasswordHash = hash;
-                _db.Users.Add(user);
-                await _db.SaveChangesAsync();
+                await _userRepository.CreateAsync(user);
                 return "";
             }
             catch (Exception ex)
