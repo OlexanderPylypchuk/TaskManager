@@ -21,7 +21,7 @@ namespace TaskManager.Service
                 prf: KeyDerivationPrf,
                 iterationCount: Iterations,
                 numBytesRequested: BytesRequested));
-            return string.Join(Delimiter, salt, hash);
+            return string.Join(Delimiter, Convert.ToBase64String(salt), hash);
         }
 
         public bool VerifyPassword(string passwordHash, string inputPassword)

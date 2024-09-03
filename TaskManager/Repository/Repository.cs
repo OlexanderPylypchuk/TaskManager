@@ -5,7 +5,7 @@ using TaskManager.Repository.IRepository;
 
 namespace TaskManager.Repository
 {
-    public class Repository<T> : TaskRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         AppDbContext _db;
         internal DbSet<T> _dbSet;
