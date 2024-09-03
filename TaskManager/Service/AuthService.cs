@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using TaskManager.Data;
@@ -56,6 +57,7 @@ namespace TaskManager.Service
                     Username = registrationRequestDto.Username,
                     Email = registrationRequestDto.Email
                 };
+                CheckPassword(registrationRequestDto.Password);
                 string hash = _passwordHasher.HashPassword(registrationRequestDto.Password);
                 user.PasswordHash = hash;
                 await _userRepository.CreateAsync(user);
@@ -63,7 +65,34 @@ namespace TaskManager.Service
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return ex.Message+ex.InnerException?.Message;
+            }
+        }
+        private void CheckPassword(string password)
+        {
+            if (password.Length < 8)
+            {
+                throw new Exception("Password is too short");
+            }
+
+            if (!Regex.IsMatch(password, "[A-Z]"))
+            {
+                throw new Exception("Password needs at least 1 uppercase letter");
+            }
+
+            if (!Regex.IsMatch(password, "[a-z]"))
+            {
+                throw new Exception("Password needs at least 1 lowercase letter");
+            }
+
+            if (!Regex.IsMatch(password, "[0-9]"))
+            {
+                throw new Exception("Password needs at least 1 number");
+            }
+
+            if (!Regex.IsMatch(password, "[^a-zA-Z0-9]"))
+            {
+                throw new Exception("Password needs at least 1 special symbol");
             }
         }
     }
