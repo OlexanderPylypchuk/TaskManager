@@ -6,7 +6,7 @@ using TaskManager.Service.IService;
 
 namespace TaskManager.Controllers
 {
-    [Route("api/auth")]
+    [Route("users")]
     [ApiController]
     public class AuthController : ControllerBase
     {

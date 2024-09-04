@@ -9,7 +9,7 @@ using TaskManager.Repository.IRepository;
 
 namespace TaskManager.Controllers
 {
-    [Route("api/task")]
+    [Route("tasks")]
     [Authorize]
     [ApiController]
     public class TaskController : ControllerBase
