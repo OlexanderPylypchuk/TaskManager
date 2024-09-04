@@ -13,9 +13,7 @@ namespace TaskManager.Models.Dtos
         public string? Description { get; set; }
         public StatusTypes Status { get; set; }
         public PriorityTypes Priority { get; set; }
-        [ForeignKey(nameof(User))]
+        public DateTime DueDate { get; set; }
         public Guid UserId { get; set; }
-        [ValidateNever]
-        public User User { get; set; }
     }
 }

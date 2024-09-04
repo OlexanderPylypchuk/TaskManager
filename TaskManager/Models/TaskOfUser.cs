@@ -15,6 +15,7 @@ namespace TaskManager.Models
         public PriorityTypes Priority { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set;}
+        public DateTime DueDate { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         [ValidateNever]

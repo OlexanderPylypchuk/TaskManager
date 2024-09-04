@@ -25,14 +25,14 @@ namespace TaskManager.Repository
             await SaveAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null)
+        public async Task<IQueryable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null)
         {
             IQueryable<T> query = _dbSet;
             if(filter != null)
             {
                 query = query.Where(filter);
             }
-            return query.ToList();
+            return query;
         }
 
         public async Task<T> GetAsync(Expression<Func<T, bool>> filter)

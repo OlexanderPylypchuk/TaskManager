@@ -4,6 +4,6 @@ namespace TaskManager.Repository.IRepository
 {
     public interface ITaskRepository : IRepository<TaskOfUser>
     {
-        Task Update(TaskOfUser taskOfUser);
+        Task UpdateAsync(TaskOfUser taskOfUser);
     }
 }
