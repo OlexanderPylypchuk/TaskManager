@@ -16,6 +16,9 @@ namespace TaskManager.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().HasIndex(u=>u.Email).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+            //saving enums as string in db
+            modelBuilder.Entity<TaskOfUser>().Property(t => t.Priority).HasConversion(v => v.ToString(), v => (PriorityTypes)Enum.Parse(typeof(PriorityTypes), v));
+            modelBuilder.Entity<TaskOfUser>().Property(t => t.Status).HasConversion(v => v.ToString(), v => (StatusTypes)Enum.Parse(typeof(StatusTypes), v)); 
         }
     }
 }

@@ -16,6 +16,7 @@ namespace TaskManager.Repository
         {
             task.CreatedAt = DateTime.Now;
             task.UpdatedAt = DateTime.Now;
+            task.Id = Guid.NewGuid();
             await base.CreateAsync(task);
         }
         public async Task UpdateAsync(TaskOfUser taskOfUser)
