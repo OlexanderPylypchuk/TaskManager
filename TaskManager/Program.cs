@@ -12,17 +12,21 @@ using TaskManager.Service.IService;
 using Microsoft.OpenApi.Models;
 using TaskManager.MapperConfig;
 using AutoMapper;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("Logs/log.txt") // file logging
+    .CreateLogger();
+builder.Services.AddSerilog();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));

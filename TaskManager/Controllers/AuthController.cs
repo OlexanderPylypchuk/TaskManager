@@ -11,11 +11,14 @@ namespace TaskManager.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger; 
         private readonly ResponceDto _responceDto;
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
             _responceDto = new ResponceDto();
+            _logger = logger;
+
         }
         [HttpPost("login")]
         public async Task<ResponceDto> Login([FromBody] LoginRequestDto loginRequestDto)
@@ -23,8 +26,9 @@ namespace TaskManager.Controllers
             try
             {
                 var login = await _authService.Login(loginRequestDto);
+                _logger.Log(logLevel: LogLevel.Information, $"User {loginRequestDto.UserName} logged in");
                 _responceDto.Result = login;
-                _responceDto.Success = true;
+                _responceDto.Success = login.User==null?true:false;
                 
             }
             catch (Exception ex)
@@ -40,12 +44,17 @@ namespace TaskManager.Controllers
             try
             {
                 var registrationResult = await _authService.Register(registrationRequestDto);
-                if(string.IsNullOrEmpty(registrationResult)) _responceDto.Success = true;
+                if (string.IsNullOrEmpty(registrationResult))
+                {
+                    _responceDto.Success = true;
+                    _logger.Log(logLevel: LogLevel.Information, $"User {registrationRequestDto.Username} registered");
+                }
                 else
                 {
                     _responceDto.Success = false;
                     _responceDto.Message = registrationResult;
                 }
+
 
             }
             catch (Exception ex)

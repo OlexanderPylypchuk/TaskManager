@@ -15,13 +15,16 @@ namespace TaskManager.Controllers
     public class TaskController : ControllerBase
     {
         private readonly ITaskRepository _taskRepository;
+        private readonly ILogger<TaskController> _logger;
         private readonly IMapper _mapper;
         private ResponceDto _responceDto;
-        public TaskController(ITaskRepository taskRepository, IMapper mapper)
+        public TaskController(ITaskRepository taskRepository, IMapper mapper, ILogger<TaskController> logger)
         {
             _taskRepository = taskRepository;
             _mapper = mapper;
-            _responceDto=new ResponceDto();
+            _responceDto = new ResponceDto();
+            _logger = logger;
+
         }
         [HttpGet("{id}")]
         public async Task<ResponceDto> GetById(string id)
@@ -51,10 +54,12 @@ namespace TaskManager.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(u => u.Type == SD.UserIdClaimName)?.Value;
                 var taskList = await _taskRepository.GetAllAsync(u => u.UserId.ToString() == userId);
+                
                 if (taskList == null)
                 {
                     throw new Exception("Could not find such task in db");
                 }
+                //querying by users request
                 if (status != null)
                 {
                     taskList=taskList.Where(u=>u.Status== status);
@@ -96,6 +101,7 @@ namespace TaskManager.Controllers
                 await _taskRepository.CreateAsync(task);
                 _responceDto.Success = true;
                 _responceDto.Result = _mapper.Map<TaskOfUserDto>(task);
+                _logger.Log(LogLevel.Information, $"User {userId} created task {task.Id}");
             }
             catch (Exception ex)
             {
@@ -123,10 +129,12 @@ namespace TaskManager.Controllers
                 task.Title = taskDto.Title;
                 task.Description = taskDto.Description;
                 task.Priority = taskDto.Priority;
+                task.DueDate = taskDto.DueDate;
                 
                 await _taskRepository.UpdateAsync(task);
                 _responceDto.Success = true;
                 _responceDto.Result = _mapper.Map<TaskOfUserDto>(task);
+                _logger.Log(LogLevel.Information, $"User {userId} updated task {task.Id}");
             }
             catch (Exception ex)
             {
@@ -152,6 +160,7 @@ namespace TaskManager.Controllers
                 }
                 await _taskRepository.DeleteAsync(task);
                 _responceDto.Success = true;
+                _logger.Log(LogLevel.Information, $"User {userId} deleted task {task.Id}");
             }
             catch (Exception ex)
             {
