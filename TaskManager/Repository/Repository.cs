@@ -25,12 +25,20 @@ namespace TaskManager.Repository
             await SaveAsync();
         }
 
-        public async Task<IQueryable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null)
+        public async Task<IQueryable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, int pageSize = 5, int pageNumber = 1)
         {
             IQueryable<T> query = _dbSet;
             if(filter != null)
             {
                 query = query.Where(filter);
+            }
+            if(pageSize > 0)
+            {
+                if(pageSize > 50)
+                {
+                    pageSize = 50;
+                }
+                query = query.Skip(pageSize*(pageNumber-1)).Take(pageSize);
             }
             return query;
         }

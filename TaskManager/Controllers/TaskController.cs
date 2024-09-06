@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using TaskManager.Models;
 using TaskManager.Models.Dtos;
 using TaskManager.Repository.IRepository;
@@ -48,12 +49,13 @@ namespace TaskManager.Controllers
             return _responceDto;
         }
         [HttpGet]
-        public async Task<ResponceDto> Get([FromQuery] StatusTypes? status = null, PriorityTypes? priority = null, bool sortByPriority = false, bool sortByDueDate = false)
+        public async Task<ResponceDto> Get([FromQuery] StatusTypes? status = null, DateTime? dueDay = null, PriorityTypes? priority = null,
+            bool sortByPriority = false, bool sortByDueDate = false, int pageSize = 5, int pageNumber = 1)
         {
             try
             {
                 var userId = User.Claims.FirstOrDefault(u => u.Type == SD.UserIdClaimName)?.Value;
-                var taskList = await _taskRepository.GetAllAsync(u => u.UserId.ToString() == userId);
+                var taskList = await _taskRepository.GetAllAsync(u => u.UserId.ToString() == userId, pageSize:pageSize, pageNumber: pageNumber);
                 
                 if (taskList == null)
                 {
@@ -67,6 +69,10 @@ namespace TaskManager.Controllers
                 if(priority != null)
                 {
                     taskList = taskList.Where(u => u.Priority == priority);
+                }
+                if (dueDay != null)
+                {
+                    taskList = taskList.Where(u => u.DueDate == dueDay);
                 }
                 if (sortByPriority && sortByDueDate)
                 {
@@ -152,7 +158,7 @@ namespace TaskManager.Controllers
                 var task = await _taskRepository.GetAsync(u => u.Id.ToString() == id);
                 if (task == null)
                 {
-                    throw new Exception("No task to update with such id");
+                    throw new Exception("No task to delete with such id");
                 }
                 if (task.UserId.ToString() != userId)
                 {
