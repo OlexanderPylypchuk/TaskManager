@@ -32,6 +32,7 @@ namespace TaskManager.Repository
             {
                 query = query.Where(filter);
             }
+            //pagination
             if(pageSize > 0)
             {
                 if(pageSize > 50)

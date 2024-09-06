@@ -27,9 +27,9 @@ namespace TaskManager.Controllers
             {
                 var login = await _authService.Login(loginRequestDto);
                 _logger.Log(logLevel: LogLevel.Information, $"User {loginRequestDto.UserName} logged in");
+                //contains token for authentication if succesful
                 _responceDto.Result = login;
-                _responceDto.Success = login.User==null?true:false;
-                
+                _responceDto.Success = login.User==null;
             }
             catch (Exception ex)
             {

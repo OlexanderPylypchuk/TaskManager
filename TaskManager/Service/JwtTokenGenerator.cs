@@ -21,6 +21,7 @@ namespace TaskManager.Service
             var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
             var claims = new List<Claim>
             {
+                //only Id is essential for this API,but email and username may be useful for future developement
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim(SD.UserIdClaimName,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Name,user.Username)

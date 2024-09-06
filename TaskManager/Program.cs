@@ -106,7 +106,7 @@ app.MapControllers();
 ApplyMigrations();
 app.Run();
 
-void ApplyMigrations()
+void ApplyMigrations() //authomatic migrations
 {
     using (var scope = app.Services.CreateScope())
     {

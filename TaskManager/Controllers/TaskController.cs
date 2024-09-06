@@ -131,6 +131,7 @@ namespace TaskManager.Controllers
                 {
                     throw new Exception("Access denied");
                 }
+                //manual update, so user cannot mess with Id and UserId
                 task.Status = taskDto.Status;
                 task.Title = taskDto.Title;
                 task.Description = taskDto.Description;
